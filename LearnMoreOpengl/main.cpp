@@ -145,21 +145,23 @@ int main(){
 	// note that we're translating the scene in the reverse direction of where we want to move
 	view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
 	projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
-	model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+	
 	vec = trans * vec;
 	
-	std::cout << vec.x << vec.y << vec.z << std::endl;
 	
-	
+	glEnable(GL_DEPTH_TEST);
 
 	//render loop
 	while (!glfwWindowShouldClose(window))
 
 	{
 		
+		float time = float(glfwGetTime());
+		glm::mat4 movement = glm::mat4(1.0f);
 		
 		
 		
+		model = glm::rotate(model, glm::radians(0.5f), glm::vec3(0.5f, 1.0f, 0.0f));
 		
 		unsigned int transformLoc = glGetUniformLocation(myProgram.program, "transform");
 		unsigned int modelLoc = glGetUniformLocation(myProgram.program, "model");
@@ -170,8 +172,10 @@ int main(){
 		glUniformMatrix4fv(perspectiveLoc, 1, GL_FALSE, glm::value_ptr(projection));
 		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
 		
+
+		
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		wallTexture.activate(GL_TEXTURE0);
 		wallTexture.bind();
