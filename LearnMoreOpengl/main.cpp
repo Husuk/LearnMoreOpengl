@@ -82,29 +82,11 @@ int main(){
 	textureCompiler wallTexture("C:/Users/user/source/repos/LearnMoreOpengl/LearnMoreOpengl/wall.jpg",GL_TEXTURE_2D,GL_MIRRORED_REPEAT,GL_MIRRORED_REPEAT,GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR,GL_RGB);
 	
 
+	textureCompiler faceTexture("C:/Users/user/source/repos/LearnMoreOpengl/LearnMoreOpengl/awesomeface.png", GL_TEXTURE_2D, GL_MIRRORED_REPEAT, GL_MIRRORED_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR, GL_RGBA);
 	
 	
 	
-	
-	unsigned int texture2;
-	glGenTextures(1, &texture2);
-	glBindTexture(GL_TEXTURE_2D, texture2);
-	stbi_set_flip_vertically_on_load(true);
 
-	int width1, height1, nrChannels1;
-	unsigned char* data1 = stbi_load("C:/Users/user/source/repos/LearnMoreOpengl/LearnMoreOpengl/awesomeface.png", &width1, &height1, &nrChannels1, 0);
-	if (data1)
-	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width1, height1, 0, GL_RGBA, GL_UNSIGNED_BYTE, data1);
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-	else
-	{
-		std::cout << "Failed to load texture" << std::endl;
-	}
-
-	
-	stbi_image_free(data1);
 	
 	myProgram.use();
 
@@ -146,8 +128,8 @@ int main(){
 
 		wallTexture.activate(GL_TEXTURE0);
 		wallTexture.bind();
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, texture2);
+		faceTexture.activate(GL_TEXTURE1);
+		faceTexture.bind();
 		myProgram.use();
 		
 		glBindVertexArray(VAO);
