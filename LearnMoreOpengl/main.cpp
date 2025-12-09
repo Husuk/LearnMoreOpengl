@@ -79,12 +79,15 @@ int main(){
 
 	
 	
-	textureCompiler wallTexture("C:/Users/user/source/repos/LearnMoreOpengl/LearnMoreOpengl/wall.jpg",GL_TEXTURE_2D,GL_MIRRORED_REPEAT,GL_MIRRORED_REPEAT,GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR,GL_RGB);
+	textureCompiler wallTexture("C:/Users/user/source/repos/LearnMoreOpengl/LearnMoreOpengl/wall.jpg",GL_TEXTURE_2D,GL_RGB);
 	
 
-	textureCompiler faceTexture("C:/Users/user/source/repos/LearnMoreOpengl/LearnMoreOpengl/awesomeface.png", GL_TEXTURE_2D, GL_MIRRORED_REPEAT, GL_MIRRORED_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR, GL_RGBA);
+	textureCompiler faceTexture("C:/Users/user/source/repos/LearnMoreOpengl/LearnMoreOpengl/awesomeface.png", GL_TEXTURE_2D,GL_RGBA);
 	
-	
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	
 
 	

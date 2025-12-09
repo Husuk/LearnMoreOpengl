@@ -8,18 +8,13 @@ public:
 	int textDimension;
 	
 	unsigned int texture;
-	textureCompiler(const char* texturePath,int textureDimension,int textWrapS,int textWrapT,int minMinifying,int minMagnifying,int colorValues) {
+	textureCompiler(const char* texturePath,int textureDimension,int colorValues) {
 		
 		glGenTextures(1, &texture);
 		glBindTexture(textureDimension, texture);
 		
 		
 		
-		glTexParameteri(textureDimension, GL_TEXTURE_WRAP_S, textWrapS);
-		glTexParameteri(textureDimension, GL_TEXTURE_WRAP_T, textWrapT);
-		glTexParameteri(textureDimension, GL_TEXTURE_MIN_FILTER, minMinifying);
-		glTexParameteri(textureDimension, GL_TEXTURE_MAG_FILTER, minMagnifying);
-
 		
 		textDimension = textureDimension;
 		
@@ -29,7 +24,7 @@ public:
 
 		if (data)
 		{
-			glTexImage2D(textDimension, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+			glTexImage2D(textDimension, 0, GL_RGB, width, height, 0, colorValues, GL_UNSIGNED_BYTE, data);
 			glGenerateMipmap(textDimension);
 		}
 		else
