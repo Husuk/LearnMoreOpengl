@@ -10,5 +10,5 @@ uniform float blue;
 
 void main()
 {
-    FragColor = mix(texture(ourTexture, TexCord) , texture(ourTexture2,TexCord),gamma)*vec4(fColor.xy,blue,1.0f);
+    FragColor = mix(texture(ourTexture, TexCord) , texture(ourTexture2,TexCord),0.5f);
 } 

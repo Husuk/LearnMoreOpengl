@@ -102,29 +102,37 @@ int main(){
 
 	glm::vec4 vec(0.0f, 0.0f, 0.0f, 1.0f);
 	glm::mat4 trans = glm::mat4(1.0f);
-	glm::mat4 trans1= glm::mat4(1.0f);
-	trans = glm::rotate(trans, glm::radians(180.0f), glm::vec3(0.0, 0.0, 1.0));
-	trans1 = glm::rotate(trans1, glm::radians(90.0f), glm::vec3(0.0, 0.0, 1.0));
+	glm::mat4 projection;
+	glm::mat4 view = glm::mat4(1.0f);
+	glm::mat4 model = glm::mat4(1.0f);
+	
+	// note that we're translating the scene in the reverse direction of where we want to move
+	view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+	projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
+	model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 	vec = trans * vec;
 	
 	std::cout << vec.x << vec.y << vec.z << std::endl;
-	unsigned int transformLoc = glGetUniformLocation(myProgram.program, "transform");
+	
 	
 
 	//render loop
 	while (!glfwWindowShouldClose(window))
 
 	{
-		GLfloat timeValue = glfwGetTime();
-		GLfloat gamma = (sin(timeValue) / 2) + 0.5;
+		
+		
+		
+		
 		
 		unsigned int transformLoc = glGetUniformLocation(myProgram.program, "transform");
-		trans = glm::translate(trans, glm::vec3(0.001f, 0.0f, 0.0f));
+		unsigned int modelLoc = glGetUniformLocation(myProgram.program, "model");
+		unsigned int viewLoc = glGetUniformLocation(myProgram.program, "view");
+		unsigned int perspectiveLoc = glGetUniformLocation(myProgram.program, "perspective");
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+		glUniformMatrix4fv(perspectiveLoc, 1, GL_FALSE, glm::value_ptr(projection));
 		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
-		
-		//trans = glm::rotate(trans, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, timeValue));
-		glUniform1f(glGetUniformLocation(myProgram.program, "gamma"), gamma);
-		glUniform1f(glGetUniformLocation(myProgram.program, "blue"), gamma);
 		
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
@@ -139,13 +147,7 @@ int main(){
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 		glDrawElements(GL_TRIANGLES, 3,GL_UNSIGNED_INT,0);
 
-		trans1 = glm::translate(trans,glm::vec3(0.5f,0.0f,0.0f));
-		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans1));
 		
-
-		
-		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
-
 		glBindVertexArray(0);
 		
 		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) 
