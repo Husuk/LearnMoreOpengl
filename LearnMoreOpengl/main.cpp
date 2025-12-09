@@ -79,7 +79,7 @@ int main(){
 
 	
 	
-	textureCompiler myTexture("C:/Users/user/source/repos/LearnMoreOpengl/LearnMoreOpengl/wall.jpg",GL_TEXTURE_2D,GL_MIRRORED_REPEAT,GL_MIRRORED_REPEAT,GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR,GL_RGB);
+	textureCompiler wallTexture("C:/Users/user/source/repos/LearnMoreOpengl/LearnMoreOpengl/wall.jpg",GL_TEXTURE_2D,GL_MIRRORED_REPEAT,GL_MIRRORED_REPEAT,GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR,GL_RGB);
 	
 
 	
@@ -144,8 +144,8 @@ int main(){
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		myTexture.activate(GL_TEXTURE0);
-		myTexture.bind();
+		wallTexture.activate(GL_TEXTURE0);
+		wallTexture.bind();
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, texture2);
 		myProgram.use();
