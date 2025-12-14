@@ -29,11 +29,15 @@ int main(){
 
 	GLFWwindow* window = glfwCreateWindow(800, 600, "learnMoreOpenGL", NULL, NULL);
 
-	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-	glfwMakeContextCurrent(window);
-	glfwSetCursorPosCallback(window, mouse_callback);
+
+
 	
+	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+	glfwSetCursorPosCallback(window, mouse_callback);
+	glfwMakeContextCurrent(window);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	
+	
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
 		std::cout << "Failed to initialize GLAD" << std::endl;
@@ -159,8 +163,9 @@ int main(){
 	
 	
 	glEnable(GL_DEPTH_TEST);
+
 	float deltaTime;
-	float lastFrame;
+	float lastFrame = glfwGetTime();
 	float currentFrame;
 	float cameraSpeed;
 	
@@ -219,7 +224,7 @@ int main(){
 		}
 		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 		{
-			view = glm::translate(view, glm::vec3(0.0f, 0.0f, cameraSpeed));
+			view = glm::translate(view, glm::vec3(0.0f, 0.0f, -cameraSpeed));
 		}
 
 
@@ -243,17 +248,11 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 	glViewport(0, 0, 800, 600);//parameters: the left x-cordinate of the viewport, the bottom y-coordinate of the viewport
 
 }
-bool firstMouse = true;
+
 void mouse_callback(GLFWwindow* window, double xposIn, double yposIn) {
 	float xpos = static_cast<float>(xposIn);
 	float ypos = static_cast<float>(yposIn);
 	
-	if (firstMouse) // initially set to true
-	{
-		lastX = xpos;
-		lastY = ypos;
-		firstMouse = false;
-	}
 	float xoffset = xpos - lastX;
 	float yoffset = lastY - ypos; // reversed since y-coordinates range from bottom to top
 	lastX = xpos;
@@ -277,4 +276,5 @@ void mouse_callback(GLFWwindow* window, double xposIn, double yposIn) {
 	direction.y = sin(glm::radians(pitch));
 	direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
 	cameraDirection = glm::normalize(direction);
+	std::cout << xoffset<<std::endl;
 }
