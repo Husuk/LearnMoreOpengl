@@ -17,6 +17,9 @@ float lastX = 400, lastY = 300;
 float yaw = -90;
 float pitch;
 glm::vec3 cameraDirection;
+glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
+glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
 int main(){
 	
@@ -147,7 +150,9 @@ int main(){
 	glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
 	glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);//the camera will look at the center of the world
 	cameraDirection = glm::normalize(cameraPos - cameraTarget);
-
+	glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
+	glm::vec3 cameraRight = glm::normalize(glm::cross(up, cameraDirection));
+	cameraUp = glm::cross(cameraDirection, cameraRight);
 
 	
 	glm::mat4 trans = glm::mat4(1.0f);
@@ -179,7 +184,7 @@ int main(){
 		lastFrame = currentFrame;
 		
 		cameraSpeed = 2.5f * deltaTime;
-
+		view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 	
 		
 		glm::mat4 movement = glm::mat4(1.0f);
@@ -218,15 +223,15 @@ int main(){
 		}
 		glfwSwapBuffers(window);
 		glfwPollEvents();
+		const float cameraSpeed = 0.05f; // adjust accordingly
 		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		{
-			view = glm::translate(view, glm::vec3(0.0f, 0.0f, cameraSpeed));
-		}
+			cameraPos += cameraSpeed * cameraFront;
 		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		{
-			view = glm::translate(view, glm::vec3(0.0f, 0.0f, -cameraSpeed));
-		}
-
+			cameraPos -= cameraSpeed * cameraFront;
+		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+			cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+			cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
 
 			
 	}
@@ -248,7 +253,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 	glViewport(0, 0, 800, 600);//parameters: the left x-cordinate of the viewport, the bottom y-coordinate of the viewport
 
 }
-
+bool firstMouse = true;
 void mouse_callback(GLFWwindow* window, double xposIn, double yposIn) {
 	float xpos = static_cast<float>(xposIn);
 	float ypos = static_cast<float>(yposIn);
@@ -257,8 +262,14 @@ void mouse_callback(GLFWwindow* window, double xposIn, double yposIn) {
 	float yoffset = lastY - ypos; // reversed since y-coordinates range from bottom to top
 	lastX = xpos;
 	lastY = ypos;
+	if (firstMouse)
+	{
+		lastX = xpos;
+		lastY = ypos;
+		firstMouse = false;
+	}
 
-	const float sensitivity = 0.1f;
+	float sensitivity = 0.1f;
 	xoffset *= sensitivity;
 	yoffset *= sensitivity;
 	yaw += xoffset;
@@ -275,6 +286,5 @@ void mouse_callback(GLFWwindow* window, double xposIn, double yposIn) {
 	direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
 	direction.y = sin(glm::radians(pitch));
 	direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-	cameraDirection = glm::normalize(direction);
-	std::cout << xoffset<<std::endl;
+	cameraFront = glm::normalize(direction);
 }
