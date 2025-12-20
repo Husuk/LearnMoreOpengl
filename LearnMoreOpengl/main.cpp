@@ -8,6 +8,7 @@
 #include<C:\Users\user\source\repos\LearnMoreOpengl\LearnMoreOpengl\texture.cpp>
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>
+#include <C:\Users\user\source\repos\LearnMoreOpengl\LearnMoreOpengl\camera.cpp>
 
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -16,14 +17,16 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 float lastX = 400, lastY = 300;
 float yaw = -90;
 float pitch;
+bool firstMouse = true;
+
 glm::vec3 cameraDirection;
 glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
 glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
-
+Camera camera(glm::vec3(0.0f, 0.0f, -3.0f));
 int main(){
-	
-	
+	firstMouse = true;
+	lastX = 400, lastY = 300;
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -39,6 +42,7 @@ int main(){
 	glfwSetCursorPosCallback(window, mouse_callback);
 	glfwMakeContextCurrent(window);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION,GL_TRUE);
 	
 	
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -48,7 +52,9 @@ int main(){
 	}
 
 	ShaderProgram myProgram("C:/Users/user/source/repos/LearnMoreOpengl/LearnMoreOpengl/vertexShader.vs", "C:/Users/user/source/repos/LearnMoreOpengl/LearnMoreOpengl/fragmentShader.fs");
-
+	textureCompiler wallTexture("C:/Users/user/source/repos/LearnMoreOpengl/LearnMoreOpengl/wall.jpg", GL_TEXTURE_2D, GL_RGB);
+	textureCompiler faceTexture("C:/Users/user/source/repos/LearnMoreOpengl/LearnMoreOpengl/awesomeface.png", GL_TEXTURE_2D, GL_RGBA);
+	
 
 
 	float verticies[] = {
@@ -100,7 +106,12 @@ int main(){
 	unsigned int indicies[] = {
 		0,1,2
 	};
-	
+	glm::vec3 modelPos[] = {
+		glm::vec3(0.0f,0.0f,3.0f),
+		glm::vec3(3.0f,0.0f,0.0f),
+		glm::vec3(0.0f,0.0f,-3.0f),
+		glm::vec3(-3.0f,0.0f,0.0f)
+	};
 
 	unsigned int VAO,VBO,EBO;
 	
@@ -128,11 +139,7 @@ int main(){
 
 	
 	
-	textureCompiler wallTexture("C:/Users/user/source/repos/LearnMoreOpengl/LearnMoreOpengl/wall.jpg",GL_TEXTURE_2D,GL_RGB);
-	
 
-	textureCompiler faceTexture("C:/Users/user/source/repos/LearnMoreOpengl/LearnMoreOpengl/awesomeface.png", GL_TEXTURE_2D,GL_RGBA);
-	
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
@@ -146,23 +153,16 @@ int main(){
 
 	glUniform1i(glGetUniformLocation(myProgram.program, "ourTexture2"), 1);
 	
-	//camera
-	glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
-	glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);//the camera will look at the center of the world
-	cameraDirection = glm::normalize(cameraPos - cameraTarget);
-	glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
-	glm::vec3 cameraRight = glm::normalize(glm::cross(up, cameraDirection));
-	cameraUp = glm::cross(cameraDirection, cameraRight);
+	
 
 	
 	glm::mat4 trans = glm::mat4(1.0f);
 	glm::mat4 projection;
 	glm::mat4 ortho;
-	glm::mat4 view = glm::mat4(1.0f);
 	glm::mat4 model = glm::mat4(1.0f);
 	
-	// note that we're translating the scene in the reverse direction of where we want to move
-	view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+	
+	
 	projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
 	ortho = glm::ortho(0.0f, 800.0f, 0.0f, 600.0f, 0.1f, 100.0f);
 	
@@ -174,7 +174,7 @@ int main(){
 	float lastFrame = glfwGetTime();
 	float currentFrame;
 	float cameraSpeed;
-	
+	bool firstPress = true;
 	//render loop
 	while (!glfwWindowShouldClose(window))
 
@@ -184,11 +184,8 @@ int main(){
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
 		
-		cameraSpeed = 2.5f * deltaTime;
-		view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-	
 		
-		glm::mat4 movement = glm::mat4(1.0f);
+		
 		model = glm::rotate(model, glm::radians(sin(currentFrame)), glm::vec3(0.5f, 1.0f, 0.0f));
 		
 		unsigned int transformLoc = glGetUniformLocation(myProgram.program, "transform");
@@ -196,11 +193,11 @@ int main(){
 		unsigned int viewLoc = glGetUniformLocation(myProgram.program, "view");
 		unsigned int perspectiveLoc = glGetUniformLocation(myProgram.program, "perspective");
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(camera.GetViewMatrix()));
 		glUniformMatrix4fv(perspectiveLoc, 1, GL_FALSE, glm::value_ptr(projection));
 		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
 		
-
+		camera.keyboardControls(0.05f, window);
 		
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -222,20 +219,34 @@ int main(){
 		{
 			glfwSetWindowShouldClose(window, true);
 		}
+		
+		for (int i = 0; i < sizeof(modelPos)/sizeof(glm::vec3); i++)
+		{
+			model = glm::mat4(1.0f);
+			model = glm::translate(model, modelPos[i]);
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+
+		}
+		if (!firstPress)
+		{
+
+			if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+			{
+				glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+				firstPress = true;
+			}
+		}
+		else
+		{
+			if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+			{
+				glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+				firstPress = false;
+			}
+		}
 		glfwSwapBuffers(window);
 		glfwPollEvents();
-		const float cameraSpeed = 0.05f; // adjust accordingly
-		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-			cameraPos += cameraSpeed * cameraFront;
-		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-			cameraPos -= cameraSpeed * cameraFront;
-		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-			cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
-		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-			cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
-		if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-			cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
-
+		
 			
 	}
 	
@@ -256,38 +267,31 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 	glViewport(0, 0, 800, 600);//parameters: the left x-cordinate of the viewport, the bottom y-coordinate of the viewport
 
 }
-bool firstMouse = true;
 void mouse_callback(GLFWwindow* window, double xposIn, double yposIn) {
+	using namespace std;
 	float xpos = static_cast<float>(xposIn);
 	float ypos = static_cast<float>(yposIn);
-	
-	float xoffset = xpos - lastX;
-	float yoffset = lastY - ypos; // reversed since y-coordinates range from bottom to top
-	lastX = xpos;
-	lastY = ypos;
 	if (firstMouse)
 	{
 		lastX = xpos;
 		lastY = ypos;
 		firstMouse = false;
 	}
+	float xoffset = lastX - xpos;
+	float yoffset = ypos - lastY; // reversed since y-coordinates range from bottom to top
+	
+	
+		
+	lastX = xpos;
+	lastY = ypos;
+	
+	
+	
+	
+	
 
-	float sensitivity = 0.1f;
-	xoffset *= sensitivity;
-	yoffset *= sensitivity;
-	yaw += xoffset;
-	pitch += yoffset;
-	if (pitch > 89.0f) {
-		pitch = 89.0f;
-	}
-		
-	if (pitch < -89.0f) {
-		pitch = -89.0f;
-	}
-		
-	glm::vec3 direction;
-	direction.x = cos(glm::radians(yaw));
-	direction.y = sin(glm::radians(pitch));
-	direction.z = sin(glm::radians(yaw));
-	cameraFront = glm::normalize(direction);
+	
+	
+	camera.mouseControls(xoffset, yoffset, 0.1f);
+	
 }
