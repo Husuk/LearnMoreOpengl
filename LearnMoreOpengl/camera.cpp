@@ -15,9 +15,7 @@ public:
 	glm::vec3 cameraRight=glm::vec3(-1.0f,0.0f,0.0f);
 	float YAW = -90;
 	float PITCH;
-	float frontX;
-	float frontY;
-	float frontZ;
+
 	glm::vec3 frontLook;
 	glm::vec3 cameraPos = glm::vec3(0.0f,0.0f,3.0f);
 
@@ -85,7 +83,7 @@ public:
 	}
 	glm::mat4 GetViewMatrix() {
 		frontLook = cameraPos + cameraFront;
-		return glm::lookAt(cameraPos,cameraPos, cameraUp);
+		return glm::lookAt(cameraPos,frontLook, cameraUp);
 
 	}
 
