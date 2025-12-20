@@ -220,13 +220,7 @@ int main(){
 			glfwSetWindowShouldClose(window, true);
 		}
 		
-		for (int i = 0; i < sizeof(modelPos)/sizeof(glm::vec3); i++)
-		{
-			model = glm::mat4(1.0f);
-			model = glm::translate(model, modelPos[i]);
-			glDrawArrays(GL_TRIANGLES, 0, 36);
-
-		}
+	
 		if (!firstPress)
 		{
 
