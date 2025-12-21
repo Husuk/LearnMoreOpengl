@@ -23,7 +23,7 @@ glm::vec3 cameraDirection;
 glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
 glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
-Camera camera(glm::vec3(0.0f, 0.0f, -3.0f));
+Camera camera(glm::vec3(0.0f, 0.0f, 0.0f));
 int main(){
 	firstMouse = true;
 	lastX = 400, lastY = 300;
@@ -186,7 +186,7 @@ int main(){
 		
 		
 		
-		model = glm::rotate(model, glm::radians(sin(currentFrame)), glm::vec3(0.5f, 1.0f, 0.0f));
+		//model = glm::rotate(model, glm::radians(sin(currentFrame)), glm::vec3(0.5f, 1.0f, 0.0f));
 		
 		unsigned int transformLoc = glGetUniformLocation(myProgram.program, "transform");
 		unsigned int modelLoc = glGetUniformLocation(myProgram.program, "model");
@@ -287,5 +287,6 @@ void mouse_callback(GLFWwindow* window, double xposIn, double yposIn) {
 	
 	
 	camera.mouseControls(xoffset, yoffset, 0.1f);
+	
 	
 }

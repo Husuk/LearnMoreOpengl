@@ -50,6 +50,8 @@ public:
 			PITCH = -89.0f;
 		}
 		
+		std::cout << "YAW:" << sin(glm::radians(YAW))<<std::endl;
+		std::cout << "PITCH:" << sin(glm::radians(PITCH)) <<std::endl;
 		UpdateCamera();
 		
 		
