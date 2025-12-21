@@ -49,10 +49,9 @@ public:
 		if (PITCH < -89.0f) {
 			PITCH = -89.0f;
 		}
+		std::cout << "YAW:" << YAW<<std::endl;
+		std::cout << "PITCH:" << PITCH<<std::endl;
 		
-		std::cout << "sin(YAW):" << sin(glm::radians(YAW))*cos(glm::radians(PITCH)) <<std::endl;
-		std::cout << "cos(YAW):" << cos(glm::radians(YAW))* cos(glm::radians(PITCH)) <<std::endl;
-		std::cout << "sin(PITCH):" << sin(glm::radians(PITCH)) <<std::endl;
 		UpdateCamera();
 		
 		

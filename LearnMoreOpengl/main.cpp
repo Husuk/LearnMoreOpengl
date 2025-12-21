@@ -263,6 +263,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 }
 void mouse_callback(GLFWwindow* window, double xposIn, double yposIn) {
 	using namespace std;
+
 	float xpos = static_cast<float>(xposIn);
 	float ypos = static_cast<float>(yposIn);
 	if (firstMouse)
@@ -271,10 +272,9 @@ void mouse_callback(GLFWwindow* window, double xposIn, double yposIn) {
 		lastY = ypos;
 		firstMouse = false;
 	}
-	float xoffset = lastX - xpos;
-	float yoffset = ypos - lastY; // reversed since y-coordinates range from bottom to top
-	
-	
+	float xoffset = xpos - lastX;
+	float yoffset = lastY - ypos; // reversed since y-coordinates range from bottom to top
+
 		
 	lastX = xpos;
 	lastY = ypos;
